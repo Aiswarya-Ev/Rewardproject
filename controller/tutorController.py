@@ -4,6 +4,8 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 from model.tutor import *
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'thecodex2023' 
+app.config['WTF_CSRF_ENABLED'] = False
 
 @app.route('/api/tutor', methods=['GET'])
 def get_tutorView():

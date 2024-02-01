@@ -7,6 +7,7 @@ from configuration import mysql_config
 import bcrypt
 from flask_bcrypt import check_password_hash
 from flask_bcrypt import generate_password_hash
+from validation.Validate import * 
 
 db = mysql.connector.connect(**mysql_config)
 cursor = db.cursor()
