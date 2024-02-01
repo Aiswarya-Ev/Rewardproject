@@ -28,6 +28,36 @@ def get_details():
     return tutview()    
 
 
+@app.route('/api/viewCourse', methods=['GET'])
+def get_course():
+    return viewcourse()
+
+@app.route('/api/addCourse', methods=['POST'])
+def course_reg():
+    return addcourse()
+
+@app.route('/api/courseDelete/<int:course_id>', methods=['DELETE'])
+def delete_course(course_id):
+    return deletecourse(course_id)
+
+@app.route('/api/assessmentView', methods=['GET'])
+def get_assessment():
+    return viewassessment()
+
+
+@app.route('/api/assessmentAdd', methods=['POST'])
+def add_assessment():
+    return addassessment()
+
+
+@app.route('/api/assessmentDelete/<int:as_id>', methods=['DELETE'])
+def delete_assessment(as_id):
+    return deleteassessment(as_id)
+
+
+@app.route('/api/student/completed_assessments/<int:student_id>,<int:course_id>', methods=['GET'])
+def add_assessment_score(student_id,course_id):
+    return assessmentCheck(student_id,course_id)
 
 
 
