@@ -5,10 +5,11 @@ import os
 
 # Add the parent directory (project_root) to sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
-
 from model.adminModel import *
 #from validation.datavalidation import *
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'thecodex2023' 
+app.config['WTF_CSRF_ENABLED'] = False
 
 @app.route('/api/student', methods=['GET'])
 def get_student():
@@ -41,10 +42,12 @@ def update_item(tutor_id):
 def get_rewards():
     return getRewards()
 
+@app.route('/api/rewards',methods=['POST'])
 def add_reward():
     data = request.get_json()
     return addReward(data)
 
+@app.route('/api/reward/<int:reward_id>', methods=['DELETE'])
 def delete_reward(reward_id):
     cursor.execute('DELETE FROM tb_rewards WHERE reward_id = %s', (reward_id,))
     db.commit()
