@@ -1,12 +1,14 @@
 import mysql.connector #connect sql
 from flask import Flask, jsonify, request #convert Python dictionaries to JSON format 
 import sys
-import os
+import os 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
+from validation.Validate import * 
 from configuration import mysql_config
 import bcrypt
 from flask_bcrypt import check_password_hash
 from flask_bcrypt import generate_password_hash
+
 
 db = mysql.connector.connect(**mysql_config)
 cursor = db.cursor()
@@ -28,18 +30,52 @@ def tutorGet(tutor_id):
     except Exception as e:
         return jsonify({'error': str(e)})
 
-def tutorPassword(login_id):
+
+
+def tutorPassword(tutor_id):
     try:
+        # Check if tutor_id exists
+        cursor.execute('SELECT login_id FROM tb_tutor WHERE tutor_id = %s', (tutor_id,))
+        tutor = cursor.fetchone()
+
+        if tutor is None:
+            return jsonify({'error': 'Tutor not found'})
+
+        tutor_login_id = tutor[0]  # Extract the login_id from the tuple
+
         data = request.get_json()
         new_password = data.get('new_password')
-        
+
         if new_password:
-            hashed_password = generate_password_hash(new_password).decode('utf-8')
-            cursor.execute('UPDATE tb_login SET userpassword = %s WHERE login_id = %s', (hashed_password, login_id))
+            hashed_password = generate_password_hash(new_password)
+            cursor.execute('UPDATE tb_login SET userpassword = %s WHERE login_id = %s', (hashed_password, tutor_login_id))
+            is_valid, error_message = validate_password(data)
+            if not is_valid:
+                return jsonify({'error': error_message})
             db.commit()
-        return jsonify({'message': 'Update successful'})
+            return jsonify({'message': 'Password updated successfully'})
+
+        return jsonify({'error': 'Password is required'})
+
     except Exception as e:
         return jsonify({'error': str(e)})
+
+
+# def tutorPassword(login_id):
+#     try:
+#         data = request.get_json()
+#         new_password = data.get('new_password')
+        
+#         if new_password:
+#             hashed_password = generate_password_hash(new_password).decode('utf-8')
+#             cursor.execute('UPDATE tb_login SET userpassword = %s WHERE login_id = %s', (hashed_password, login_id))
+#             is_valid, error_message = validate_password(data)
+#         if not is_valid:
+#             return jsonify({'error': error_message})
+#         db.commit()
+#         return jsonify({'message': 'Update successful'})
+#     except Exception as e:
+#         return jsonify({'error': str(e)})
 
 
 def tutorUpdation(tutor_id):
@@ -60,11 +96,27 @@ def tutorUpdation(tutor_id):
                 cursor.execute(f'UPDATE tb_tutor SET {key} = %s WHERE tutor_id = %s', (value, tutor_id))
                 updated_fields.append(key)
 
+        is_valid, error_message = validate_tutor(data)
+        if not is_valid:
+            return jsonify({'error': error_message})
         db.commit()
 
         return jsonify({'message': 'tutor data updated successfully', 'updated_fields': updated_fields})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def tutview():
     try:
@@ -91,8 +143,10 @@ def addcourse():
         coins = data.get('coins')
         assessment_no = data.get('assessment_no')
         tutor_id = data.get('tutor_id')
-
         cursor.execute('INSERT INTO tb_course (c_name, start_date, coins, assessment_no, tutor_id) VALUES (%s, %s, %s, %s, %s)', (name, start_date, coins, assessment_no, tutor_id))
+        is_valid, error_message = validate_course(data)
+        if not is_valid:
+            return jsonify({'error': error_message})
         db.commit()
         return jsonify({'message': 'Course entered successfully'})
     except Exception as e:
@@ -134,6 +188,10 @@ def addassessment():
         courseid = data.get('course_id')
 
         cursor.execute('INSERT INTO tb_assessment (as_name, as_date, course_id) VALUES (%s, %s, %s)', (name, as_date, courseid))
+        
+        is_valid, error_message = validate_assessment(data)
+        if not is_valid:
+            return jsonify({'error': error_message})
         db.commit()
         return jsonify({'message': 'Entered successfully'})
     except Exception as e:
@@ -172,3 +230,15 @@ def assessmentCheck(student_id,course_id):
         return jsonify({'message': 'Assessment completed successfully'})
     except Exception as e:
         return jsonify({'error': str(e)})
+    
+
+def selectcourseId(as_id):
+    try:
+        cursor.execute('SELECT course_id FROM tb_assessment WHERE as_id = %s', (as_id,))
+        result = cursor.fetchone()
+        if result is not None:
+            return result[0]
+        else:
+            return None 
+    except Exception as e:
+        print(f"Error: {e}")

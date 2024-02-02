@@ -4,6 +4,8 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 from model.tutor import *
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'thecodex2023' 
+app.config['WTF_CSRF_ENABLED'] = False
 
 @app.route('/api/tutor', methods=['GET'])
 def get_tutorView():
@@ -60,6 +62,9 @@ def add_assessment_score(student_id,course_id):
     return assessmentCheck(student_id,course_id)
 
 
-
+@app.route('/api/select_courseId/<int:as_id>', methods=['GET'])
+def select_courseId(as_id):
+    courseid=selectcourseId(as_id)
+    return jsonify({'course_id':courseid})
 if __name__ == '__main__':
     app.run(debug=True)
