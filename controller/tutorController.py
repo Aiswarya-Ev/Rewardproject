@@ -62,6 +62,9 @@ def add_assessment_score(student_id,course_id):
     return assessmentCheck(student_id,course_id)
 
 
-
+@app.route('/api/select_courseId/<int:as_id>', methods=['GET'])
+def select_courseId(as_id):
+    courseid=selectcourseId(as_id)
+    return jsonify({'course_id':courseid})
 if __name__ == '__main__':
     app.run(debug=True)
