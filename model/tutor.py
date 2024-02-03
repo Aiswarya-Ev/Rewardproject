@@ -22,6 +22,7 @@ def getTutorView():
     except Exception as e:
         return jsonify({'error': str(e)})
     
+
 def tutorGet(tutor_id):
     try:
         cursor.execute('SELECT login_id FROM tb_tutor WHERE tutor_id=%s',(tutor_id,))
@@ -61,22 +62,6 @@ def tutorPassword(tutor_id):
         return jsonify({'error': str(e)})
 
 
-# def tutorPassword(login_id):
-#     try:
-#         data = request.get_json()
-#         new_password = data.get('new_password')
-        
-#         if new_password:
-#             hashed_password = generate_password_hash(new_password).decode('utf-8')
-#             cursor.execute('UPDATE tb_login SET userpassword = %s WHERE login_id = %s', (hashed_password, login_id))
-#             is_valid, error_message = validate_password(data)
-#         if not is_valid:
-#             return jsonify({'error': error_message})
-#         db.commit()
-#         return jsonify({'message': 'Update successful'})
-#     except Exception as e:
-#         return jsonify({'error': str(e)})
-
 
 def tutorUpdation(tutor_id):
     try:
@@ -104,15 +89,6 @@ def tutorUpdation(tutor_id):
         return jsonify({'message': 'tutor data updated successfully', 'updated_fields': updated_fields})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
-
-
-
-
-
-
-
 
 
 
