@@ -1,0 +1,801 @@
+openapi: 3.0.0
+info:
+  title: REWARD MANAGEMENT API
+  description: >-
+    This is a sample Reward Management Server based on the OpenAPI 3.0
+    specification.  You can find out more about
+
+    Swagger at [https://swagger.io](https://swagger.io). In the third iteration
+    of the reward management we've switched to the design first approach!
+
+    You can now help us improve the API whether it's by making changes to the
+    definition itself or to the code.
+
+    That way, with time, we can improve the API in general, and expose some of
+    the new features in OAS3.
+
+
+
+    Some useful links:
+
+    - [The Reward Management
+    repository](https://github.com/Aiswarya-Ev/Rewardproject.git)
+  version: 1.0.0
+paths:
+  /admin/item:
+    get:
+      tags:
+        - admin
+      summary: Get all redeemable items
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                tb_item:
+                  - item_id: 1
+                    item_name: "Item A"
+                    cost: 50
+                    stock: 100
+                  - item_id: 2
+                    item_name: "Item B"
+                    cost: 75
+                    stock: 50
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                Error: Internal Server Error
+  /admin/additem:
+    post:
+      tags:
+        - admin
+      summary: Add a new redeemable item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                item_name:
+                  type: string
+                cost:
+                  type: integer
+                stock:
+                  type: integer
+              required:
+                - item_name
+                - cost
+                - stock
+      responses:
+        '200':
+          description: Insert successful
+          content:
+            application/json:
+              example:
+                message: Insert successful
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              example:
+                error: Validation error message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                Error: Internal Server Error
+  /deleteitem:
+    delete:
+      tags:
+        - admin
+      summary: Delete a redeemable item by ID
+      parameters:
+        - name: item_id
+          in: query
+          required: true
+          description: ID of the redeemable item to delete
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Item deleted successfully
+          content:
+            application/json:
+              example:
+                message: Item deleted successfully
+        '404':
+          description: ID not found
+          content:
+            application/json:
+              example:
+                error: Id not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                Error: Internal Server Error
+  /studentbadge:
+    get:
+      tags:
+        - student
+      summary: Get badges details for a student
+      parameters:
+        - name: student_id
+          in: query
+          required: true
+          description: ID of the student to fetch badges
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                badges:
+                  - attendance_score: 80
+                    as_name: "Assessment A"
+                    total_score: 100
+                  - attendance_score: 75
+                    as_name: "Assessment B"
+                    total_score: 90
+        '404':
+          description: ID not found
+          content:
+            application/json:
+              example:
+                error: Id not found
+        '500':
+          description: Error fetching badges
+          content:
+            application/json:
+              example:
+                message: Error fetching badges
+  /admin/certificates:
+    get:
+      tags:
+        - student
+      summary: Get certificates details for a student
+      parameters:
+        - name: student_id
+          in: query
+          required: true
+          description: ID of the student to fetch certificates
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                certificates:
+                  - c_name: "Course A"
+                    enrollment_date: "2022-01-01"
+                    enrollment_score: 90
+                  - c_name: "Course B"
+                    enrollment_date: "2022-02-15"
+                    enrollment_score: 85
+        '404':
+          description: ID not found
+          content:
+            application/json:
+              example:
+                error: Id not found
+        '500':
+          description: Error fetching certificates
+          content:
+            application/json:
+              example:
+                message: Error fetching certificates
+  /admin/search:
+    get:
+      tags:
+        - student
+      summary: Search for items by name
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: The name of the item to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                items:
+                  - item_id: 1
+                    item_name: "Item A"
+                    cost: 50
+                    stock: 100
+                  - item_id: 2
+                    item_name: "Item B"
+                    cost: 75
+                    stock: 50
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                message: Please provide a valid item name
+        '500':
+          description: Error searching for items
+          content:
+            application/json:
+              example:
+                message: Error searching for items
+  /admin/oldcourses:
+    get:
+      tags:
+        - student
+      summary: Get all courses for a student
+      parameters:
+        - name: student_id
+          in: query
+          required: true
+          description: ID of the student to fetch courses
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                courses:
+                  - course_id: 1
+                    course_name: "Course A"
+                    enrollment_date: "2022-01-01"
+                    enrollment_score: 90
+                    status: "Completed"
+                  - course_id: 2
+                    course_name: "Course B"
+                    enrollment_date: "2022-02-15"
+                    enrollment_score: 85
+                    status: "In Progress"
+  /api/tutor:
+    get:
+      summary: Get Tutor View
+      tags:
+        - tutor
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                tb_tutor:
+                  - tutor_id: 1
+                    t_name: Tutor 1
+                    t_dob: '1990-01-01'
+                    t_email: tutor1@example.com
+                    t_phoneno: 1234567890
+                  - tutor_id: 2
+                    t_name: Tutor 2
+                    t_dob: '1995-02-02'
+                    t_email: tutor2@example.com
+                    t_phoneno: 9876543210
+        '500':
+          description: Internal Server Error
+  /api/tutor/update_password:
+    put:
+      summary: Update Tutor Password
+      tags:
+        - tutor
+      parameters:
+        - name: tutor_id
+          in: query
+          required: true
+          description: ID of the tutor
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              old_password: current_password
+              new_password: new_password
+      responses:
+        '200':
+          description: Password updated successfully
+          content:
+            application/json:
+              example:
+                message: Password updated successfully
+        '401':
+          description: Unauthorized - Old password is incorrect
+          content:
+            application/json:
+              example:
+                error: Old password is incorrect
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                error: Internal Server Error
+  /api/tutorUpdation/{tutor_id}:
+    put:
+      summary: Update Tutor Information
+      tags:
+        - tutor
+      parameters:
+        - name: tutor_id
+          in: path
+          required: true
+          description: ID of the tutor to be updated
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              t_name: Updated Tutor Name
+              t_dob: '1990-01-01'
+              t_email: updated_email@example.com
+              t_phoneno: 9876543210
+      responses:
+        '200':
+          description: Tutor data updated successfully
+          content:
+            application/json:
+              example:
+                message: Tutor data updated successfully
+                updated_fields:
+                  - t_name
+                  - t_dob
+                  - t_email
+                  - t_phoneno
+        '400':
+          description: Bad Request - No data provided in the request
+        '404':
+          description: Tutor not found
+        '500':
+          description: Internal Server Error
+  /api/tutor/std_assmnts:
+    get:
+      summary: Get Student Assessment Details
+      tags:
+        - tutor
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                - s_name: Student 1
+                  as_name: Assessment 1
+                  as_date: '2024-02-05'
+                - s_name: Student 2
+                  as_name: Assessment 2
+                  as_date: '2024-02-06'
+        '500':
+          description: Internal Server Error
+  /api/viewCourse:
+    get:
+      summary: Get Course Details
+      tags:
+        - tutor
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                tb_course:
+                  - course_id: 1
+                    c_name: Course 1
+                    start_date: '2024-02-05'
+                    coins: 100
+                    tutor_id: 101
+                    assessment_no: 3
+                  - course_id: 2
+                    c_name: Course 2
+                    start_date: '2024-02-06'
+                    coins: 150
+                    tutor_id: 102
+                    assessment_no: 2
+        '500':
+          description: Internal Server Error
+  /addCourse:
+    post:
+      summary: Register a New Course
+      tags:
+        - tutor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              c_name: New Course
+              start_date: '2024-02-07'
+              coins: 120
+              assessment_no: 4
+              tutor_id: 103
+      responses:
+        '200':
+          description: Course entered successfully
+          content:
+            application/json:
+              example:
+                message: Course entered successfully
+        '400':
+          description: Bad Request - Validation Error
+        '500':
+          description: Internal Server Error
+  /courseDelete:
+    delete:
+      summary: Delete a Course
+      tags:
+        - tutor
+      parameters:
+        - name: course_id
+          in: query
+          required: true
+          description: ID of the course to be deleted
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Item deleted successfully
+          content:
+            application/json:
+              example:
+                message: Item deleted successfully
+        '404':
+          description: Course not found with the given ID
+        '500':
+          description: Internal Server Error
+  /assessmentView:
+    get:
+      summary: Get Assessment Details
+      tags:
+        - tutor
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                tb_assessment:
+                  - assessment_id: 1
+                    as_name: Assessment 1
+                    as_date: '2024-02-08'
+                    course_id: 1
+                    student_id: 101
+                  - assessment_id: 2
+                    as_name: Assessment 2
+                    as_date: '2024-02-09'
+                    course_id: 2
+                    student_id: 102
+        '500':
+          description: Internal Server Error
+  /assessmentAdd:
+    post:
+      summary: Add a New Assessment
+      tags:
+        - tutor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              as_name: New Assessment
+              as_date: '2024-02-10'
+              course_id: 1
+      responses:
+        '200':
+          description: Entered successfully
+          content:
+            application/json:
+              example:
+                message: Entered successfully
+        '400':
+          description: Bad Request - Validation Error
+        '500':
+          description: Internal Server Error
+  /assessmentDelete:
+    delete:
+      summary: Delete an Assessment
+      tags:
+        - tutor
+      parameters:
+        - name: as_id
+          in: query
+          required: true
+          description: ID of the assessment to be deleted
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Item deleted successfully
+          content:
+            application/json:
+              example:
+                message: Item deleted successfully
+        '404':
+          description: Assessment not found with the given ID
+        '500':
+          description: Internal Server Error
+  /completedAssessments:
+    get:
+      summary: Check Completed Assessments
+      tags:
+        - tutor
+      parameters:
+        - name: student_id
+          in: query
+          required: true
+          description: ID of the student
+          schema:
+            type: integer
+        - name: course_id
+          in: query
+          required: true
+          description: ID of the course
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Assessment status check result
+          content:
+            application/json:
+              example:
+                messages:
+                  - Assessment completed successfully
+                  - >-
+                    Student has already completed all assessments and cannot add
+                    more.
+        '500':
+          description: Internal Server Error
+  /select_courseId:
+    get:
+      summary: Get Course ID by Assessment ID
+      tags:
+        - tutor
+      parameters:
+        - name: as_id
+          in: query
+          required: true
+          description: ID of the assessment
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                course_id: 1
+        '500':
+          description: Internal Server Error
+  /api/stuRecd_crtfct:
+    get:
+      summary: Get Student Certificates
+      tags:
+        - tutor
+      parameters:
+        - name: student_id
+          in: query
+          required: true
+          description: ID of the student
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                - c_name: Course 1
+                  enrollment_date: '2024-02-15'
+                  enrollment_score: 90
+                - c_name: Course 2
+                  enrollment_date: '2024-03-10'
+                  enrollment_score: 85
+        '404':
+          description: Student ID not found
+          content:
+            application/json:
+              example:
+                error: Id not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                error: Internal Server Error
+  /student:
+    put:
+      summary: Update Student Information
+      tags:
+        - student
+      parameters:
+        - name: student_id
+          in: query
+          required: true
+          description: ID of the student
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              s_name: abc
+              s_dob: '1999-12-01'
+              s_email: abc@example.com
+              s_phoneno: 9967452300
+      responses:
+        '200':
+          description: Student data updated successfully
+          content:
+            application/json:
+              example:
+                message: Student data updated successfully
+                updated_fields:
+                  - s_name
+                  - s_dob
+                  - s_email
+                  - s_phoneno
+        '400':
+          description: Bad Request - No data provided in the request
+        '404':
+          description: Student not found
+        '500':
+          description: Internal Server Error
+ 
+  /showItem:
+    get:
+      summary: Get Available Items
+      tags:
+        - student
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                showritem:
+                  - item_id: 1
+                    item_name: Item 1
+                    cost: 50
+                    stock: 10
+                  - item_id: 2
+                    item_name: Item 2
+                    cost: 30
+                    stock: 5
+        '404':
+          description: Id not found
+        '500':
+          description: Internal Server Error
+  /purchaseItem:
+    post:
+      summary: Purchase an Item
+      tags:
+        - student
+      parameters:
+        - name: item_id
+          in: query
+          required: true
+          description: ID of the item to be purchased
+          schema:
+            type: integer
+        - name: student_id
+          in: query
+          required: true
+          description: ID of the student
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Item selected successfully
+          content:
+            application/json:
+              example:
+                message: Item selected successfully
+        '404':
+          description: Item not found
+        '500':
+          description: Internal Server Error
+  /showCoin:
+    get:
+      summary: Get Student Supercoins
+      tags:
+        - student
+      parameters:
+        - name: student_id
+          in: query
+          required: true
+          description: ID of the student
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                student_coin:
+                  - coins: 100
+        '404':
+          description: Id not found
+        '500':
+          description: Internal Server Error
+  /enrollment:
+    post:
+      summary: Add Enrollment
+      tags:
+        - student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              e_date: '2024-02-15'
+              course_id: 1
+              student_id: 101
+              status: "Booked"
+      responses:
+        '200':
+          description: Data added successfully
+          content:
+            application/json:
+              example:
+                message: Data added successfully
+        '500':
+          description: Internal Server Error
+  /score:
+    post:
+      summary: Add Student's Assessment Score
+      tags:
+        - student
+      parameters:
+        - name: student_id
+          in: query
+          required: true
+          description: ID of the student
+          schema:
+            type: integer
+        - name: as_id
+          in: query
+          required: true
+          description: ID of the assessment
+          schema:
+            type: integer
+        - name: score
+          in: query
+          required: true
+          description: Score of the assessment
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Score added successfully
+          content:
+            application/json:
+              example:
+                message: Score added successfully
+        '500':
+          description: Internal Server Error
+tags:
+  - name: admin
+    description: Everything about admin
+  - name: student
+    description: Everything about students
+  - name: tutor
+    description: Everything about tutors
+servers:
+  - url: https://localhost:5000
+    variables: {}
