@@ -14,7 +14,34 @@ from utilities.utilities import*
 db = mysql.connector.connect(**mysql_config)
 cursor = db.cursor()
 
-
+def select_tutor_details(tablename,fieldname,student_id):
+    try:
+        db = mysql.connector.connect(**mysql_config)
+        cursor = db.cursor()
+        cursor.execute(f'SELECT  * FROM {tablename}  WHERE {fieldname} = %s',(student_id,))
+        data = cursor.fetchall()
+        structured_items = []
+        structured_items.append({
+        'id': data[0][0],
+        'username': data[0][1],
+        'date': data[0][2],
+          'email': data[0][3],
+        'phone': data[0][4],
+        'house_no': data[0][7],
+          'city': data[0][8],
+        'state': data[0][9],
+        'country': data[0][10],
+          'pin': data[0][11],
+        'login': data[0][5]  # Assuming third column is description
+        })
+        return generate_response(structured_items)
+    except Exception as e:
+        return jsonify({'Error':str(e)}) 
+    finally:
+        # Close database connection
+        if db.is_connected():
+            cursor.close()
+            db.close()
 def getTutorView():
     try:
         cursor.execute('SELECT * FROM tb_tutor')
@@ -117,10 +144,10 @@ def addcourse():
         coins = data.get('coins')
         tutor_id = data.get('tutor_id')
         cursor.execute('INSERT INTO tb_course (c_name, start_date, coins,tutor_id) VALUES (%s, %s, %s,%s)', (name, start_date, coins,tutor_id))
+        db.commit()
         is_valid, error_message = validate_course(data)
         if not is_valid:
             return jsonify({'error': error_message})
-        db.commit()
         return jsonify({'message': 'Course entered successfully'})
     except Exception as e:
         return jsonify({'error': str(e)})
@@ -152,8 +179,9 @@ def viewassessment(tutor_id):
             'assessment_id': data[0],
             'as_name': data[1],
             'as_date': data[2],
-            'coins': data[3],
-            'total': data[4]
+            'course_id': data[3],
+            'coins': data[4],
+            'total':data[5]
         })
         return generate_response(structured_items)
     except Exception as e:
@@ -168,6 +196,7 @@ def addassessment():
         course_id = data.get('course_id')
         coins=data.get('coins')
         cursor.execute('INSERT INTO tb_assessment (as_name, as_date, course_id,coins) VALUES (%s, %s, %s,%s)', (name, as_date, course_id,coins))
+        db.commit()
         cursor.execute('select assessment_no from tb_course where course_id=%s',(course_id,))
         number=cursor.fetchone()[0]
         number=number+1

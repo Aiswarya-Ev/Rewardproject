@@ -12,7 +12,7 @@ def get_tutorView():
 @tutor_blueprint.route('/', methods=['GET'])
 def get_student_info():
     login_id = request.args.get("login_id",type=int)
-    return select_student_details("tb_tutor","login_id",login_id)
+    return select_tutor_details("tb_tutor","login_id",login_id)
 @tutor_blueprint.route('/update', methods=['PUT'])
 def update_tutor():
     tutor_id = request.args.get("tutor_id")

@@ -18,12 +18,12 @@ def checkAssessmentCompletion(student_id,as_id):
     try:
         # Fetch the total assessment number required for the course
         course_id = selectcourseId(as_id)
-        if course_id is None:
-            return jsonify({'message': 'Student is not enrolled in any courses.'})
-        else:
-            cursor.execute('SELECT COUNT(*) as count FROM tb_attendance ad JOIN tb_assessment at ON ad.assessment_id = at.as_id WHERE ad.student_id = %s AND at.course_id = %s', (student_id, course_id))
-            completed_assessments_count = cursor.fetchone()[0]
-            return completed_assessments_count,course_id
+        # if course_id is None:
+        #     return jsonify({'message': 'Student is not enrolled in any courses.'})
+        # else:
+        cursor.execute('SELECT COUNT(*) as count FROM tb_attendance ad JOIN tb_assessment at ON ad.assessment_id = at.as_id WHERE ad.student_id = %s AND at.course_id = %s', (student_id, course_id))
+        completed_assessments_count = cursor.fetchone()[0]
+        return completed_assessments_count,course_id
     except Exception as e:
         return jsonify({'error': str(e)})
 def checkTotalAssessment(course_id):
@@ -97,9 +97,9 @@ def certificate(student_id,assessment_id):
 def certification(student_id,assessment_id,score):
     course_id=selectcourseId(assessment_id)
     cursor.execute("select * from tb_enrollment where student_id=%s and course_id=%s",(student_id,course_id))
-    check=cursor.fetchone()[0]
-    if not check:
-        return jsonify({'messege':"not entrolled to this course"})
+    check=cursor.fetchone()
+    # if not check:
+    #     return jsonify({'messege':"not entrolled to this course"})
     badge_result=checkBadge(student_id,assessment_id,score)
     completed_assessment,id=checkAssessmentCompletion(student_id,assessment_id)
     total_assessment=checkTotalAssessment(id)

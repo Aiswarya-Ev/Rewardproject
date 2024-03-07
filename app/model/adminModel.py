@@ -52,17 +52,17 @@ def selectAdmin(id):
         return jsonify({'Error':str(e)})           
 def registeration(data):
     try:
-        name = data.get('s_name')
-        dob = data.get('s_dob')
-        email = data.get('s_email')
-        phone = data.get('s_phoneno')
-        house = data.get('s_houseno')
-        city = data.get('s_city')
-        state = data.get('s_state')
-        country = data.get('s_country')  # Corrected variable name
-        pin = data.get('s_pin')
+        name = data.get('name')
+        dob = data.get('dob')
+        email = data.get('email')
+        phone = data.get('phoneNo')
+        house = data.get('houseno')
+        city = data.get('city')
+        state = data.get('state')
+        country = data.get('country')  # Corrected variable name
+        pin = data.get('pincode')
         username = data.get('username')
-        password = data.get('userpassword')
+        password = data.get('password')
         user_type = data.get('type')  # Corrected variable name
 
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
@@ -84,7 +84,7 @@ def registeration(data):
                 cursor.execute('INSERT INTO tb_tutor(t_name, t_dob, t_email, t_phoneno, t_houseno, t_city, t_state, t_country, t_pin, login_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
                         (name, dob, email, phone, house, city, state, country, pin, login_id))
             db.commit()
-            return jsonify({'message': 'Registration successful'})
+            return generate_response()
     except Exception as e:
         return jsonify({'Error':str(e)})
 
@@ -165,7 +165,7 @@ def approve(tutor_id):
             return jsonify({'error': 'tutor not found with the given ID'}), 404
         cursor.execute('UPDATE tb_tutor SET approve = 1 WHERE tutor_id = %s', (tutor_id,))
         db.commit()
-        return jsonify({'message': 'Item updated successfully'})
+        return generate_response()
     except Exception as e:
         return jsonify({'Error':str(e)})
 
@@ -215,12 +215,12 @@ def deleteRedeemableitem(item_id):
         cursor.execute('SELECT * FROM tb_item WHERE item_id = %s', (item_id,))
         result = cursor.fetchone()
         if not result:
-            return jsonify({'error': 'Id not found'}), 404
+            return generate_response(status_code=404) 
         cursor.execute('DELETE FROM tb_item WHERE item_id = %s', (item_id,))
         db.commit()
-        return jsonify({'message': 'Item deleted successfully'})
+        return generate_response()
     except Exception as e:
-        return jsonify({'Error':str(e)})
+        return generate_response(status_code=405)
     
 def get_student_badges(student_id):
         # Query to fetch badge details for a student by joining two tables
